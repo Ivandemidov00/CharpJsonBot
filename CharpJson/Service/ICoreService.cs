@@ -1,9 +1,8 @@
+namespace CharpToJson.Service;
 
-namespace CharpToJson.Service
+public interface ICoreService
 {
-    public interface ICoreService
-    {
-        public Task<String> ExecuteAsync(Object update);
-        public Task<String> Start();
-    }
+    public Task<string> ExecuteAsync(object update);
+
+    public Task<string> Start();
 }
