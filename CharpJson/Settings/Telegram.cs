@@ -1,7 +1,9 @@
-namespace CharpJson.Settings;
-
-public record Telegram
+namespace CharpJson.Settings
 {
-    public string Token { get; init; }
-    public string Url { get; init; }
+
+    public record Telegram
+    {
+        public string Token { get; init; }
+        public string Url { get; init; }
+    }
 }

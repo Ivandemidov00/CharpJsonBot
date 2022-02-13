@@ -1,8 +1,10 @@
-namespace CharpJson.Settings;
-
-public record Command
+namespace CharpJson.Settings
 {
-    public string SetWebHook { get; init; }
-    public string GetMe { get; init; }
-    public string SendMessage { get; init; }
+
+    public record Command
+    {
+        public string SetWebHook { get; init; }
+        public string GetMe { get; init; }
+        public string SendMessage { get; init; }
+    }
 }
