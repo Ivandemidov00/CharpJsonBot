@@ -1,32 +1,34 @@
-using CharpJson.Service.Interface;
-using CharpJson.Settings;
+using CSharpJson.Domain;
+using CSharpJson.Infrastructure.Settings;
+using CSharpJson.Infrastructure.Verification;
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
 
-namespace CharpJson.Service.Implementation
+namespace CSharpJson.Infrastructure.Core
 {
 
     public class CoreService : ICoreService
     {
         private const string InvalidMessage = "invalid message";
         private readonly Command _command;
-        private readonly Settings.Telegram _telegramSettings;
+        private TelegramSettings _telegramSettings;
         private readonly IIdentificationService _identificationService;
 
-        public CoreService(IOptionsMonitor<Settings.Telegram> telegram, IOptionsMonitor<Command> command, IIdentificationService identificationService)
+        public CoreService(IOptionsMonitor<TelegramSettings> optionsMonitor, IOptionsMonitor<Command> command, IIdentificationService identificationService)
         {
-            _telegramSettings = telegram.CurrentValue;
-            _command = command.CurrentValue;
             _identificationService = identificationService;
+            _command = command.CurrentValue;
+            _telegramSettings = optionsMonitor.CurrentValue;
+            optionsMonitor.OnChange(_ => _telegramSettings = _);
         }
 
         public async Task<string> ExecuteAsync(object update)
         {
             var updateDto = JsonConvert.DeserializeObject<Update>(update.ToString());
-            var typeMessage =  await _identificationService.CheckType(updateDto.Message.Text);
+            var typeMessage =  await _identificationService.CheckType(updateDto.Message?.Text);
             var reply = typeMessage.ToString();
             return await (_telegramSettings.Token + _command.SendMessage)
                 .SetQueryParams(
@@ -38,8 +40,8 @@ namespace CharpJson.Service.Implementation
                 .GetStringAsync();
         }
 
-        public async Task<string> Start()
+        public async Task<IFlurlResponse> SetWebHook()
             => await (_telegramSettings.Token + _command.SetWebHook + _telegramSettings.Url)
-                .GetStringAsync();
+                .GetAsync();
     }
 }

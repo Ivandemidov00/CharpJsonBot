@@ -1,17 +1,13 @@
-using System.Linq;
-using CharpJson.Service.Interface;
-using Microsoft.CodeAnalysis;
+using CSharpJson.Domain;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json.Linq;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
-namespace CharpJson.Service.Implementation
+namespace CSharpJson.Infrastructure.Verification
 {
     public class IdentificationService : IIdentificationService
     {
-        public async Task<TypeMessage> CheckType(string message)
+        public async Task<TypeMessage> CheckType(string? message)
         {
 
             var typeMessage = TypeMessage.Invalid;
@@ -22,7 +18,7 @@ namespace CharpJson.Service.Implementation
             return typeMessage;
         }
 
-        private bool CheckFromJson(string message)
+        private bool CheckFromJson(string? message)
         {
             try
             {
@@ -35,7 +31,7 @@ namespace CharpJson.Service.Implementation
             }
         }
 
-        private async Task<bool> CheckFromCode(string message)
+        private async Task<bool> CheckFromCode(string? message)
         {
             try
             {
