@@ -1,9 +1,11 @@
+using System.Data;
 using CSharpJson.Domain;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json.Linq;
 
-namespace CSharpJson.Infrastructure.Verification
+namespace CSharpJson.Application.Verification
 {
     public class IdentificationService : IIdentificationService
     {
@@ -37,11 +39,11 @@ namespace CSharpJson.Infrastructure.Verification
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(message);
                 var rootTree = await syntaxTree.GetRootAsync();
-                var propertyDeclarationSyntaxes = rootTree.DescendantNodes().OfType<PropertyDeclarationSyntax>()
-                    .First(_ => _.Modifiers.First() == SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-                return true;
+                var result = rootTree.DescendantNodes().OfType<PropertyDeclarationSyntax>().Any(_ =>
+                    _.Modifiers.Any(syntaxToken => syntaxToken.Kind() == SyntaxKind.PublicKeyword));
+                return result;
             }
-            catch (Exception)
+            catch (SyntaxErrorException)
             {
                 return false;
             }

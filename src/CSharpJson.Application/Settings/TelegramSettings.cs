@@ -1,6 +1,6 @@
-namespace CSharpJson.Infrastructure.Settings;
+namespace CSharpJson.Application.Settings;
 
-public class TelegramSettings
+public record TelegramSettings
 {
     public string Token { get; init; }
     public string Url { get; init; }

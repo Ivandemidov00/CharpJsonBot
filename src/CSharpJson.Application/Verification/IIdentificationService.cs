@@ -1,6 +1,6 @@
 using CSharpJson.Domain;
 
-namespace CSharpJson.Infrastructure.Verification
+namespace CSharpJson.Application.Verification
 {
     public interface IIdentificationService
     {

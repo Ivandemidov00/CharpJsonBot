@@ -1,6 +1,6 @@
 using Flurl.Http;
 
-namespace CSharpJson.Infrastructure.Core
+namespace CSharpJson.Application.Core
 {
 
     public interface ICoreService

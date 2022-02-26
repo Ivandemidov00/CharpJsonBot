@@ -1,13 +1,13 @@
+using CSharpJson.Application.Settings;
+using CSharpJson.Application.Verification;
 using CSharpJson.Domain;
-using CSharpJson.Infrastructure.Settings;
-using CSharpJson.Infrastructure.Verification;
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
 
-namespace CSharpJson.Infrastructure.Core
+namespace CSharpJson.Application.Core
 {
 
     public class CoreService : ICoreService
