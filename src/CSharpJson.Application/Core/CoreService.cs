@@ -1,43 +1,53 @@
+using CSharpJson.Application.Handler;
 using CSharpJson.Application.Settings;
 using CSharpJson.Application.Verification;
 using CSharpJson.Domain;
 using Flurl;
 using Flurl.Http;
+using Flurl.Util;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace CSharpJson.Application.Core
 {
 
-    public class CoreService : ICoreService
+    public class CoreService
     {
-        private const string InvalidMessage = "invalid message";
         private readonly Command _command;
         private TelegramSettings _telegramSettings;
-        private readonly IIdentificationService _identificationService;
+        private readonly IMessageHandlers _messageHandlers;
 
-        public CoreService(IOptionsMonitor<TelegramSettings> optionsMonitor, IOptionsMonitor<Command> command, IIdentificationService identificationService)
+        public CoreService(IOptionsMonitor<TelegramSettings> optionsMonitor, IOptionsMonitor<Command> command, IMessageHandlers messageHandlers)
         {
-            _identificationService = identificationService;
+            _messageHandlers = messageHandlers;
             _command = command.CurrentValue;
             _telegramSettings = optionsMonitor.CurrentValue;
             optionsMonitor.OnChange(_ => _telegramSettings = _);
         }
 
-        public async Task<string> ExecuteAsync(object update)
+        public async Task<string> ExecuteAsync(Update update, TypeMessage type)
         {
-            var updateDto = JsonConvert.DeserializeObject<Update>(update.ToString());
-            var typeMessage =  await _identificationService.CheckType(updateDto.Message?.Text);
-            var reply = typeMessage.ToString();
-            return await (_telegramSettings.Token + _command.SendMessage)
-                .SetQueryParams(
-                    new
-                    {
-                        chat_id = updateDto.Message?.Chat.Id, text = reply,
-                        parse_mode = "MarkdownV2"
-                    })
+            var reply = update.Message?.Text == null
+                ? TypeMessage.Invalid.ToString()
+                : CallHandlers();
+            return await (_telegramSettings.Token + _command.SendMessage).SetQueryParams(new
+                {
+                    chat_id = update.Message?.Chat.Id, text = reply, parse_mode = ParseMode.MarkdownV2
+                })
                 .GetStringAsync();
+
+            string CallHandlers()
+                => type switch
+                {
+                    TypeMessage.Code => _messageHandlers.CodeHandler(
+                        update.Message.Text),
+                    TypeMessage.Json => _messageHandlers.JsonHandler(
+                        update.Message.Text),
+                    _ => TypeMessage.Invalid.ToString()
+                };
         }
 
         public async Task<IFlurlResponse> SetWebHook()
