@@ -1,13 +1,9 @@
 using CSharpJson.Application.Handler;
 using CSharpJson.Application.Settings;
-using CSharpJson.Application.Verification;
 using CSharpJson.Domain;
 using Flurl;
 using Flurl.Http;
-using Flurl.Util;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 

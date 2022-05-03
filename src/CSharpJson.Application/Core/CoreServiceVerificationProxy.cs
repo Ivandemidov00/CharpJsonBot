@@ -18,7 +18,7 @@ public class CoreServiceVerificationProxy : ICoreService
     public async Task<string> ExecuteAsync(object update)
     {
         var updateDto = JsonConvert.DeserializeObject<Update>(update.ToString());
-        var typeMessage = await _identificationService.CheckType(updateDto.Message.Text);
+        var typeMessage = await _identificationService.CheckType(updateDto.Message?.Text ?? string.Empty);
         return await _coreService.ExecuteAsync(updateDto, typeMessage);
     }
 

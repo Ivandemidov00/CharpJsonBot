@@ -14,7 +14,6 @@ namespace CSharpJson.Application
         public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
             serviceCollection.AddSingleton<IMessageHandlers, MessageHandlers>();
-            serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddSingleton<CoreService, CoreService>();
             serviceCollection.AddSingleton<ICoreService, CoreServiceVerificationProxy>();
             serviceCollection.AddSingleton<IIdentificationService, IdentificationService>();
