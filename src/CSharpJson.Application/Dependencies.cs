@@ -17,7 +17,6 @@ namespace CSharpJson.Application
             serviceCollection.AddSingleton<CoreService, CoreService>();
             serviceCollection.AddSingleton<ICoreService, CoreServiceVerificationProxy>();
             serviceCollection.AddSingleton<IIdentificationService, IdentificationService>();
-            serviceCollection.Configure<Command>(configuration.GetSection(nameof(Command)));
             serviceCollection.Configure<TelegramSettings>(configuration.GetSection(nameof(TelegramSettings)));
 
             return serviceCollection;

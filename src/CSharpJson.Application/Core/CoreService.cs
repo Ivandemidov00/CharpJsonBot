@@ -12,14 +12,12 @@ namespace CSharpJson.Application.Core
 
     public class CoreService
     {
-        private readonly Command _command;
         private TelegramSettings _telegramSettings;
         private readonly IMessageHandlers _messageHandlers;
 
-        public CoreService(IOptionsMonitor<TelegramSettings> optionsMonitor, IOptionsMonitor<Command> command, IMessageHandlers messageHandlers)
+        public CoreService(IOptionsMonitor<TelegramSettings> optionsMonitor, IMessageHandlers messageHandlers)
         {
             _messageHandlers = messageHandlers;
-            _command = command.CurrentValue;
             _telegramSettings = optionsMonitor.CurrentValue;
             optionsMonitor.OnChange(_ => _telegramSettings = _);
         }
@@ -29,7 +27,7 @@ namespace CSharpJson.Application.Core
             var reply = update.Message?.Text == null
                 ? TypeMessage.Invalid.ToString()
                 : CallHandlers();
-            return await (_telegramSettings.Token + _command.SendMessage).SetQueryParams(new
+            return await (_telegramSettings.BaseAddressTelegram + _telegramSettings.Token + Command.SendMessage).SetQueryParams(new
                 {
                     chat_id = update.Message?.Chat.Id, text = reply, parse_mode = ParseMode.MarkdownV2
                 })
@@ -47,7 +45,7 @@ namespace CSharpJson.Application.Core
         }
 
         public async Task<IFlurlResponse> SetWebHook()
-            => await (_telegramSettings.Token + _command.SetWebHook + _telegramSettings.Url)
+            => await (_telegramSettings.BaseAddressTelegram + _telegramSettings.Token + Command.SetWebHook + _telegramSettings.Url)
                 .GetAsync();
     }
 }

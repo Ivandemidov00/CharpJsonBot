@@ -1,7 +1,7 @@
 namespace CSharpJson.Domain;
 
-public record Command
+public struct Command
 {
-    public string SetWebHook { get; init; }
-    public string SendMessage { get; init; }
+    public static string SetWebHook { get; } = "setWebhook?url=";
+    public static string SendMessage { get; } = "sendMessage";
 }

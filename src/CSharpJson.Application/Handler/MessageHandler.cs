@@ -4,11 +4,11 @@ public class MessageHandlers : IMessageHandlers
 {
     public string JsonHandler(string? json)
     {
-        return string.Empty;
+        return "JsonToCode";
     }
 
     public string CodeHandler(string? code)
     {
-        return string.Empty;
+        return "CodeToJson";
     }
 }
