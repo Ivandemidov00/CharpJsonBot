@@ -1,15 +1,14 @@
 using System.Data;
+using System.Text.Json;
 using CSharpJson.Domain;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json.Linq;
 
 namespace CSharpJson.Application.Verification
 {
-    public class IdentificationService : IIdentificationService
+    public sealed class IdentificationService : IIdentificationService
     {
-        public async Task<TypeMessage> CheckType(string? message)
+        public async Task<TypeMessage> CheckType(string message)
         {
 
             var typeMessage = TypeMessage.Invalid;
@@ -20,12 +19,12 @@ namespace CSharpJson.Application.Verification
             return typeMessage;
         }
 
-        private bool CheckFromJson(string? message)
+        private static bool CheckFromJson(string message)
         {
             try
             {
-                JToken.Parse(message);
-                return true;
+                var jsonDocument =JsonDocument.Parse(message);
+                return jsonDocument.RootElement.EnumerateObject().Any(_ => !string.IsNullOrEmpty(_.Name) && !string.IsNullOrEmpty(_.Value.ToString()) || !string.IsNullOrEmpty(_.Name));
             }
             catch(Exception)
             {
@@ -33,14 +32,13 @@ namespace CSharpJson.Application.Verification
             }
         }
 
-        private async Task<bool> CheckFromCode(string? message)
+        private static async Task<bool> CheckFromCode(string message)
         {
             try
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(message);
                 var rootTree = await syntaxTree.GetRootAsync();
-                var result = rootTree.DescendantNodes().OfType<PropertyDeclarationSyntax>().Any(_ =>
-                    _.Modifiers.Any(syntaxToken => syntaxToken.Kind() == SyntaxKind.PublicKeyword));
+                var result = rootTree.DescendantNodes().OfType<PropertyDeclarationSyntax>().Any(_ =>_.Modifiers.Any(syntaxToken => syntaxToken.Kind() == SyntaxKind.PublicKeyword));
                 return result;
             }
             catch (SyntaxErrorException)
@@ -48,6 +46,5 @@ namespace CSharpJson.Application.Verification
                 return false;
             }
         }
-        
     }
 }

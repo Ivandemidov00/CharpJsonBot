@@ -4,6 +4,6 @@ namespace CSharpJson.Application.Verification
 {
     public interface IIdentificationService
     {
-        public Task<TypeMessage> CheckType(string? message);
+        public Task<TypeMessage> CheckType(string message);
     }
 }
